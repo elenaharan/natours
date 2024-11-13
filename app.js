@@ -35,9 +35,22 @@ app.get('/api/v1/tours', (req, res) => {
 //for us to send data we need to use middleware
 //we need to declare: app.use(express.json()); at the top
 app.post('/api/v1/tours', (req, res) => {
-  //the body is available on the req b/c we used middleware
-  console.log(req.body)
-  res.send('Done')
+  const newId = tours[tours.length - 1].id + 1;
+  const newTour = Object.assign({ id: newId }, req.body);
+  tours.push(newTour);
+
+  fs.writeFile(
+    `${__dirname}/dev-data/data/tours-simple.json`,
+    JSON.stringify(tours),
+    (err) => {
+      res.status(201).json({
+        status: 'success',
+        data: {
+          tour: newTour,
+        },
+      });
+    }
+  );
 });
 
 const port = 3000;
