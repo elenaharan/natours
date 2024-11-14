@@ -31,6 +31,18 @@ app.get('/api/v1/tours', (req, res) => {
   });
 });
 
+app.get('/api/v1/tours/:id', (req, res) => {
+  console.log(req.params);
+
+  res.status(200).json({
+    status: 'success',
+    // results: tours.length,
+    // data: {
+    //   tours,
+    // },
+  });
+});
+
 //out of the box, express does not put data on the request
 //for us to send data we need to use middleware
 //we need to declare: app.use(express.json()); at the top
@@ -52,6 +64,7 @@ app.post('/api/v1/tours', (req, res) => {
     }
   );
 });
+
 
 const port = 3000;
 //start up a server
