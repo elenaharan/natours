@@ -39,6 +39,14 @@ app.get('/api/v1/tours/:id', (req, res) => {
   //multiplying by 1 converts a string into a number
   const id = req.params.id * 1;
 
+  // if (id > tours.length) {
+  if (!tour) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+
   const tour = tours.find((el) => el.id === id);
   console.log('tour:', tour);
 
