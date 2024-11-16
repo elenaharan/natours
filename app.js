@@ -27,6 +27,7 @@ const getTourById = (req, res) => {
   //multiplying by 1 converts a string into a number
   const id = req.params.id * 1;
 
+  const tour = tours.find((el) => el.id === id);
   // if (id > tours.length) {
   if (!tour) {
     return res.status(404).json({
@@ -35,7 +36,6 @@ const getTourById = (req, res) => {
     });
   }
 
-  const tour = tours.find((el) => el.id === id);
   console.log('tour:', tour);
 
   res.status(200).json({
