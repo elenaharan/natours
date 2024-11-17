@@ -3,16 +3,33 @@ const express = require('express');
 
 const app = express();
 
-//middleware
+//use .use() method to add a function to our middleware stack
 app.use(express.json());
+
+//we need to pass in a function that we want to add to our middleware stack
+//by adding next as the third argument, express knows that we are defining a middleware
+//the middleware functions must come before route handlers
+//because the route handler would end the req-res cycle and out middleware wouldn't be executed 
+app.use((req, res, next) => {
+  console.log('Hello from the middleware 👋')
+  next();
+});
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+})
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
 const getAllTours = (req, res) => {
+  console.log(req.requestTime);
+
   res.status(200).json({
     status: 'success',
+    requestedAt: req.requestTime,
     results: tours.length,
     data: {
       tours,
