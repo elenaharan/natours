@@ -1,9 +1,13 @@
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan');
 
 const app = express();
 
-//use .use() method to add a function to our middleware stack
+//1) MIDDLEWARES
+
+//use .use() method to add a function to the project's middleware stack
+app.use(morgan('dev'));
 app.use(express.json());
 
 //we need to pass in a function that we want to add to our middleware stack
@@ -23,6 +27,8 @@ app.use((req, res, next) => {
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
+
+//2) ROUTE HANDLERS
 
 const getAllTours = (req, res) => {
   console.log(req.requestTime);
@@ -121,12 +127,16 @@ const deleteTour = (req, res) => {
 // app.patch('/api/v1/tours/:id', updateTour);
 // app.delete('/api/v1/tours/:id', deleteTour);
 
+//3) ROUTE HANDLERS
+
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 app
   .route('/api/v1/tours/:id')
   .get(getTourById)
   .patch(updateTour)
   .delete(deleteTour);
+
+//4) START SERVER
 
 const port = 3000;
 
