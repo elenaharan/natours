@@ -4,7 +4,6 @@ const users = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/users.json`)
 );
 
-//ROUTE HANDLERS
 exports.getAllUsers = (req, res) => {
   res.status(200).json({
     status: 'success',

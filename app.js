@@ -5,8 +5,6 @@ const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
-//1) MIDDLEWARES
-
 //use .use() method to add a function to the project's middleware stack
 app.use(morgan('dev'));
 app.use(express.json());
@@ -31,11 +29,11 @@ app.use((req, res, next) => {
 // app.patch('/api/v1/tours/:id', updateTour);
 // app.delete('/api/v1/tours/:id', deleteTour);
 
-//4) MOUNTING ROUTES
+//MOUNTING ROUTES
 app.use('/api/v1/tours', tourRouter);
 app.use('api/v1/users', userRouter);
 
-//4) START SERVER
+//START SERVER
 const port = 3000;
 
 app.listen(port, () => {
