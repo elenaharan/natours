@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 
 //MOUNTING ROUTES
 app.use('/api/v1/tours', tourRouter);
-app.use('api/v1/users', userRouter);
+app.use('/api/v1/users', userRouter);
 
 //START SERVER
 const port = 3000;
