@@ -2,10 +2,8 @@ const express = require('express');
 const tourController = require('./../controllers/tourController');
 const router = express.Router();
 
-router.param('id', (req, res, next, val) => {
-  console.log(`Tour id is ${val}`);
-  next();
-});
+//add param middleware that will always run on this router
+router.param('id', tourController.checkId);
 
 router
   .route('/')

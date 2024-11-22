@@ -4,6 +4,20 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 );
 
+exports.checkId = (req, res, next, val) => {
+  console.log(`Tour id is ${val}`);
+
+  if (req.params.id * 1 > tours.length) {
+    //it is important to return this function, so that this middleware doesn't hit next() and progress calling the next middleware
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+
+  next();
+};
+
 //ROUTE HANDLERS
 exports.getAllTours = (req, res) => {
   console.log(req.requestTime);
@@ -65,13 +79,6 @@ exports.createTour = (req, res) => {
 };
 
 exports.updateTour = (req, res) => {
-  if (req.params.id * 1 > tours.length) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-
   res.status(200).json({
     status: 'success',
     data: {
@@ -81,13 +88,6 @@ exports.updateTour = (req, res) => {
 };
 
 exports.deleteTour = (req, res) => {
-  if (req.params.id * 1 > tours.length) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-
   res.status(204).json({
     status: 'success',
     data: null,
