@@ -8,6 +8,7 @@ const app = express();
 //use .use() method to add a function to the project's middleware stack
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(express.static(`${__dirname}/public`));
 
 //we need to pass in a function that we want to add to our middleware stack
 //by adding next as the third argument, express knows that we are defining a middleware
