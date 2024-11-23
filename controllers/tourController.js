@@ -4,6 +4,8 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 );
 
+
+//middleware functions
 exports.checkId = (req, res, next, val) => {
   console.log(`Tour id is ${val}`);
 
@@ -14,6 +16,19 @@ exports.checkId = (req, res, next, val) => {
       message: 'Invalid ID',
     });
   }
+
+  next();
+};
+
+exports.checkBody = (req, res, next) => {
+  console.log(req.body);
+  const { name, price } = req.body;
+
+  if (!name || !price)
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Name and price of the tour must be included.',
+    });
 
   next();
 };
@@ -55,6 +70,7 @@ exports.getTourById = (req, res) => {
     },
   });
 };
+
 
 //out of the box, express does not put data on the request
 //for that we need to use middleware
