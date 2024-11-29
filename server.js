@@ -33,7 +33,25 @@ const tourSchema = new mongoose.Schema({
   },
 });
 
+//The first argument is the name of the collection
+//mongoose will convert it into lower case plural, i.e. "tours"
 const Tour = mongoose.model('Tour', tourSchema);
+
+const testTour = new Tour({
+  name: 'The Forest Hiker',
+  rating: 4.7,
+  price: 497,
+});
+
+//save() method available on the mongoose model saves the document into the DB collection
+testTour
+  .save()
+  .then((doc) => {
+    console.log(doc);
+  })
+  .catch((err) => {
+    console.log('ERROR 💥:', err);
+  });
 
 //START SERVER
 const port = process.env.PORT || 3000;
