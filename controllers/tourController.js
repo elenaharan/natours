@@ -4,51 +4,62 @@ const Tour = require('../models/tourModel');
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
 // );
 
-//ROUTE HANDLERS
-exports.getAllTours = (req, res) => {
-  console.log(req.requestTime);
+exports.getAllTours = async (req, res) => {
+  try {
+    const tours = await Tour.find();
 
-  res.status(200).json({
-    status: 'success',
-    requestedAt: req.requestTime,
-    // results: tours.length,
-    // data: {
-    //   tours,
-    // },
-  });
+    res.status(200).json({
+      status: 'success',
+      results: tours.length,
+      data: {
+        tours,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err,
+    });
+  }
 };
 
-exports.getTourById = (req, res) => {
-  //read params from the url
-  console.log(req.params);
+exports.getTourById = async (req, res) => {
+  try {
+    const tour = await Tour.findById(req.params.id);
 
-  //multiplying by 1 converts a string into a number
-  // const id = req.params.id * 1;
-
-  // const tour = tours.find((el) => el.id === id);
-  // // if (id > tours.length) {
-  // if (!tour) {
-  //   return res.status(404).json({
-  //     status: 'fail',
-  //     message: 'Invalid ID',
-  //   });
-  // }
-
-  res.status(200).json({
-    status: 'success',
-    // data: {
-    //   tour,
-    // },
-  });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err,
+    });
+  }
 };
 
 //out of the box, express does not put data on the request
 //for that we need to use middleware
 //declare: app.use(express.json()); at the top
-exports.createTour = (req, res) => {
-  res.status(201).json({
-    status: 'success',
-  });
+exports.createTour = async (req, res) => {
+  try {
+    const newTour = await Tour.create(req.body);
+
+    res.status(201).json({
+      status: 'success',
+      data: {
+        tour: newTour,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: 'Invalid data sent',
+    });
+  }
 };
 
 exports.updateTour = (req, res) => {
