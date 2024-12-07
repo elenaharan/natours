@@ -6,7 +6,12 @@ const Tour = require('../models/tourModel');
 
 exports.getAllTours = async (req, res) => {
   try {
-    console.log(req.query);
+
+    const queryObject = { ...req.query };
+    const exludedFields = ['page', 'sort', 'limit', 'fields'];
+    exludedFields.forEach((el) => delete queryObject[el]);
+    console.log(req.query, queryObject);
+
 
     //one way to filter in mongoose - is to pass in a filter object
     const tours = await Tour.find(req.query);
