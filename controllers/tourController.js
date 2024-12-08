@@ -10,11 +10,9 @@ exports.getAllTours = async (req, res) => {
     const queryObject = { ...req.query };
     const exludedFields = ['page', 'sort', 'limit', 'fields'];
     exludedFields.forEach((el) => delete queryObject[el]);
-    console.log(req.query, queryObject);
-
 
     //one way to filter in mongoose - is to pass in a filter object
-    const tours = await Tour.find(req.query);
+    const query = Tour.find(queryObject);
 
     //another way to filter
     // const tours = await Tour.find()
@@ -22,6 +20,8 @@ exports.getAllTours = async (req, res) => {
     //   .equals(5)
     //   .where('difficulty')
     //   .equals('easy');
+
+    const tours = await query;
 
     res.status(200).json({
       status: 'success',
