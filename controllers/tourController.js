@@ -7,20 +7,26 @@ const Tour = require('../models/tourModel');
 exports.getAllTours = async (req, res) => {
   try {
     //BUILD QUERY
+    //1A Filtering: excluding certain fields from filtering
     const queryObject = { ...req.query };
     const exludedFields = ['page', 'sort', 'limit', 'fields'];
     exludedFields.forEach((el) => delete queryObject[el]);
 
-    //FILTERING
-    //CONVERT OBJECT TO A STRING
+    //1B ADVANCED FILTERING - modify query to match MongoDB format
     let queryString = JSON.stringify(queryObject);
     queryString = queryString.replace(
       /\b(gte|gt|lte|lt)\b/g,
       (match) => `$${match}`,
     );
 
-    //one way to filter in mongoose - is to pass in a filtering object
-    const query = Tour.find(JSON.parse(queryString));
+    let query = Tour.find(JSON.parse(queryString));
+
+    //2 SORTING
+    if (req.query.sort) {
+      query = query.sort(req.query.sort.split(',').join(' '));
+    } else {
+      query = query.sort('-createdAt');
+    }
 
     //another way to filter
     // const tours = await Tour.find()
