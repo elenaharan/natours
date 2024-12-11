@@ -28,6 +28,13 @@ exports.getAllTours = async (req, res) => {
       query = query.sort('-createdAt');
     }
 
+    //3 FIELD LIMITING
+    if (req.query.fields) {
+      const fields = req.query.fields.split(',').join(' ');
+      query = query.select(fields);
+    } else {
+      query = query.select('-__v');
+    }
     //another way to filter
     // const tours = await Tour.find()
     //   .where('duration')
