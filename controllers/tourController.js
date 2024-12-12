@@ -25,7 +25,7 @@ exports.getAllTours = async (req, res) => {
     if (req.query.sort) {
       query = query.sort(req.query.sort.split(',').join(' '));
     } else {
-      query = query.sort('-createdAt');
+      query = query.sort('-_id');
     }
 
     //3 FIELD LIMITING
@@ -35,6 +35,13 @@ exports.getAllTours = async (req, res) => {
     } else {
       query = query.select('-__v');
     }
+
+    //PAGINATION
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 100;
+    const skip = (page - 1) * limit;
+    query = query.skip(skip).limit(limit);
+
     //another way to filter
     // const tours = await Tour.find()
     //   .where('duration')
