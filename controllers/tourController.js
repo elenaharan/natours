@@ -11,11 +11,14 @@ exports.aliasTopTours = (req, res, next) => {
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`),
 // );
 
-exports.getAllTours = async (req, res) => {
-  try {
-    //BUILD QUERY
-    //1A Filtering: excluding certain fields from filtering
-    const queryObject = { ...req.query };
+class APIFeatures {
+  constructor(query, queryString) {
+    this.query = query;
+    this.queryString = queryString;
+  }
+
+  filter() {
+    const queryObject = { ...this.queryString };
     const exludedFields = ['page', 'sort', 'limit', 'fields'];
     exludedFields.forEach((el) => delete queryObject[el]);
 
@@ -26,8 +29,12 @@ exports.getAllTours = async (req, res) => {
       (match) => `$${match}`,
     );
 
-    let query = Tour.find(JSON.parse(queryString));
+    this.query.find(JSON.parse(queryString));
+  }
+}
 
+exports.getAllTours = async (req, res) => {
+  try {
     //2 SORTING
     if (req.query.sort) {
       query = query.sort(req.query.sort.split(',').join(' '));
@@ -57,12 +64,9 @@ exports.getAllTours = async (req, res) => {
         throw new Error('The page you requested does not exist');
     }
 
-    //another way to filter
-    // const tours = await Tour.find()
-    //   .where('duration')
-    //   .equals(5)
-    //   .where('difficulty')
-    //   .equals('easy');
+    //EXECUTE QUERY
+    const features = new APIFeatures(Tour.find(), req.query).filter();
+    const query = await features.query;
 
     const tours = await query;
 
