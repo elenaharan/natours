@@ -54,6 +54,10 @@ const tourSchema = new mongoose.Schema({
   startDates: [Date],
 });
 
+tourSchema.virtual('durationWeeks').get(function () {
+  return this.duration / 7;
+});
+
 //The first argument is the name of the collection
 //mongoose will convert it into lower case plural, i.e. "tours"
 const Tour = mongoose.model('Tour', tourSchema);
