@@ -55,6 +55,10 @@ const tourSchema = new mongoose.Schema(
       select: false,
     },
     startDates: [Date],
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -81,6 +85,15 @@ tourSchema.pre('save', function (next) {
 //   console.log(doc);
 //   next();
 // });
+
+//QUERY MIDDLEWARE
+//find() hook will also have access to this keyword
+//but this keyword would point to the query, not the document
+//like with the save() and create() hooks
+tourSchema.pre(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } });
+  next();
+});
 
 //The first argument is the name of the collection
 //mongoose will convert it into lower case plural, i.e. "tours"
