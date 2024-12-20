@@ -66,11 +66,21 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
-//DOCUMENT MIDDLEWARE: runs before save() and create()
+//DOCUMENT MIDDLEWARE: runs before save() and create() commands
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
+
+// tourSchema.pre('save', function (next) {
+//   console.log('Will save doc...');
+//   next();
+// });
+
+// tourSchema.post('save', function (savedDoc, next) {
+//   console.log(doc);
+//   next();
+// });
 
 //The first argument is the name of the collection
 //mongoose will convert it into lower case plural, i.e. "tours"
