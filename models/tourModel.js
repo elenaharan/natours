@@ -46,6 +46,7 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       validate: {
         validator: function (val) {
+          //this keyword here points to curr doc only on NEW doc creation, but no on update
           return val < this.price;
         },
         message: 'Discount price ({VALUE}) should be below regular price',
