@@ -12,6 +12,9 @@ const app = express();
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+//out of the box, express does not put data on the request
+//for that we need to use middleware
+//declare: app.use(express.json()); at the top
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
