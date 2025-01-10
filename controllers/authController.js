@@ -75,6 +75,12 @@ exports.protect = catchAsync(async (req, res, next) => {
   console.log(decoded);
 
   //3)check if user still exists
+  const freshUser = await User.findById(decoded.id);
+
+  if (!freshUser)
+    return next(
+      new AppError('The user belonging to the token no longer exists.', 401),
+    );
 
   //4)check if user changed password after the JWT was issued
 
