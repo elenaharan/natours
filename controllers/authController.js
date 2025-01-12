@@ -73,18 +73,23 @@ exports.protect = catchAsync(async (req, res, next) => {
   //the third argument that needs to be passed down into the verify fn is callback that will run
   //after verification is completed
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log(decoded);
 
   //3)check if user still exists
-  const freshUser = await User.findById(decoded.id);
+  const currentUser = await User.findById(decoded.id);
 
-  if (!freshUser)
+  if (!currentUser)
     return next(
       new AppError('The user belonging to the token no longer exists.', 401),
     );
 
   //4)check if user changed password after the JWT was issued
-  freshUser.changedPasswordAfter(decoded.iat);
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new AppError('User recently changed password! Please log in again.', 401),
+    );
+  }
 
+  req.user = currentUser;
+  //GRANT ACCESS TO THE PROTECTED ROUTE
   next();
 });
