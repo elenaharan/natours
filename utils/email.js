@@ -17,7 +17,7 @@ const sendEmail = async (options) => {
     to: options.email,
     subject: options.subject,
     text: options.message,
-    //html: we can specify the HTML property
+    //html: we can specify the HTML property or leave it as text
   };
 
   //3) send email
