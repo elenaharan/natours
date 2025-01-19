@@ -172,6 +172,8 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   //3) update changedAt property as per usual
+  //this is implemented on the model's middleware
+
   //4)Log the user in, send JWT
   const token = signToken(user._id);
 
