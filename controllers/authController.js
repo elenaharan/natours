@@ -93,7 +93,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   req.user = currentUser;
-  //GRANT ACCESS TO THE PROTECTED ROUTE
   next();
 });
 
@@ -191,13 +190,13 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
   //2) check if POSTed current password is correct
   //3) if so, update password
-  if (!(await user.correctPassword(password, user.password))) {
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
     return next(
       new AppError('The old password you provided is not correct!', 401),
     );
   }
 
-  user.password = req.body.newPassword;
+  user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
 
