@@ -11,26 +11,29 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
-exports.signup = catchAsync(async (req, res, next) => {
-  const newUser = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-    passwordChangedAt: req.body.passwordChangedAt,
-    role: req.body.role,
-  });
+const createAndSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
 
-  const token = signToken(newUser._id);
-
-  res.status(201).json({
+  res.status(statusCode).json({
     status: 'success',
-    //we log user in right after sign up because we send token to the client
     token,
     data: {
-      user: newUser,
+      user,
     },
   });
+};
+
+exports.signup = catchAsync(async (req, res, next) => {
+  // const newUser = await User.create({
+  //   name: req.body.name,
+  //   email: req.body.email,
+  //   password: req.body.password,
+  //   passwordConfirm: req.body.passwordConfirm,
+  //   passwordChangedAt: req.body.passwordChangedAt,
+  //   role: req.body.role,
+  // });
+  const newUser = await User.create(req.body);
+  createAndSendToken(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -49,12 +52,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   //3) if everything ok, send token
-  const token = signToken(user._id);
-
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+  createAndSendToken(user, 200, res);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -174,17 +172,10 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   //this is implemented on the model's middleware
 
   //4)Log the user in, send JWT
-  const token = signToken(user._id);
-
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+  createAndSendToken(user, 200, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
-  const { password } = req.body;
-
   //1) Get user from the collection
   const user = await User.findById(req.user.id).select('+password');
 
@@ -198,15 +189,12 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
+
+  //findByIdAndUpdate will not work because the validation middleware wouldn't run
   await user.save();
 
   //4) log user in, send JWT
-  const token = signToken(user._id);
-
-  res.status(200).json({
-    status: 'success',
-    token,
-  });
+  createAndSendToken(user, 200, res);
 
   next();
 });
