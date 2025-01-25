@@ -3,6 +3,16 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+
+  return newObj;
+};
+
 // const users = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/users.json`);
 // );
@@ -33,14 +43,20 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   //runValidators: true => check if supplied fields are correct
   //we will need to filter the body so that it only contains certain fields that are allowed to be updated
   //for ex, if body.role = 'admin', this should not be allowed
-  // const filteredBody = filterObj(req.body, 'name', 'email');
-  const updatedUser = User.findByIdAndUpdate(req.user.id, x, {
+
+  //filter out fields that are not allowed to be updated
+  const filteredBody = filterObj(req.body, 'name', 'email');
+
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
   });
 
   res.status(200).json({
     status: 'success',
+    data: {
+      user: updatedUser,
+    },
   });
 });
 
