@@ -9,10 +9,21 @@ const userRouter = require('./routes/userRoutes');
 
 const app = express();
 
+//1) GLOBAL MIDDLEWARES
 //use .use() method to add a function to the project's middleware stack
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP, please try again in an hour!',
+});
+
+//specifying the route would trigger limiter only on those routes that contains /api in the url
+app.use('/api', limiter);
+
 //out of the box, express does not put data on the request
 //for that we need to use middleware
 //declare: app.use(express.json()); at the top
