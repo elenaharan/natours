@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -10,11 +11,15 @@ const userRouter = require('./routes/userRoutes');
 const app = express();
 
 //1) GLOBAL MIDDLEWARES
+//SET SECURITY HTTP HEADERS
+app.use(helmet());
+
 //use .use() method to add a function to the project's middleware stack
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+//LIMIT REQUEST FROM SAME IP
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
@@ -27,9 +32,18 @@ app.use('/api', limiter);
 //out of the box, express does not put data on the request
 //for that we need to use middleware
 //declare: app.use(express.json()); at the top
-app.use(express.json());
+//BODY PARSER, reading data from body into req.body
+//limit body of the req to 10kb
+app.use(
+  express.json({
+    limit: '10kb',
+  }),
+);
+
+//serving static files
 app.use(express.static(`${__dirname}/public`));
 
+//Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
 
