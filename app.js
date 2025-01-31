@@ -49,9 +49,21 @@ app.use(mongoSanitize());
 //DATA SANITIZATION against XSS (Cross-site scripting attacks)
 app.use(xss());
 
-//prevent parameter pollution
+//prevent parameter pollution - this middleware should be used by the end b/c it prevents param pollution
 //it will use the last param
-app.use(hpp());
+//we can whitelist some params that we allow to be duplicates in the query
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ]
+  })
+);
 
 //serving static files
 app.use(express.static(`${__dirname}/public`));
