@@ -1,3 +1,4 @@
+const APIFeatures = require('../utils/apiFeatures');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 
@@ -48,10 +49,9 @@ exports.createOne = (Model) =>
 
 exports.getOne = (Model, populateOptions) =>
   catchAsync(async (req, res, next) => {
-    let query = await Model.findById(req.params.id);
+    let query = Model.findById(req.params.id);
 
-    if (populateOptions)
-      query = await Model.findById(req.params.id).populate(populateOptions);
+    if (populateOptions) query = query.populate(populateOptions);
 
     const doc = await query;
 
@@ -63,6 +63,31 @@ exports.getOne = (Model, populateOptions) =>
       status: 'success',
       data: {
         data: doc,
+      },
+    });
+  });
+
+exports.getAll = (Model) =>
+  catchAsync(async (req, res, next) => {
+    let filter = {};
+
+    if (req.params.id) filter = { tour: req.params.id };
+
+    const features = new APIFeatures(Model.find(filter), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const query = await features.query;
+
+    const docs = await query;
+
+    res.status(200).json({
+      status: 'success',
+      results: docs.length,
+      data: {
+        data: docs,
       },
     });
   });

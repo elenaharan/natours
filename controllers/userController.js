@@ -18,16 +18,7 @@ const filterObj = (obj, ...allowedFields) => {
 //   fs.readFileSync(`${__dirname}/../dev-data/data/users.json`);
 // );
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      users,
-    },
-  });
-});
+exports.getAllUsers = factory.getAll(User);
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   //create an error if the user POSTs the password
@@ -73,16 +64,11 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'this route is not yet defined',
+    message: 'This route is not defined. Please, use /signup instead.',
   });
 };
 
-exports.getUserById = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'this route is not yet defined',
-  });
-};
+exports.getUserById = factory.getOne(User);
 
 exports.deleteUser = factory.deleteOne(User);
 //DO NOT USE TO UPDATE PASSWORD
