@@ -5,6 +5,8 @@ const authController = require('../controllers/authController');
 //we need to set mergeParams to true so that reviews router has access to url params from the tour router
 const router = express.Router({ mergeParams: true });
 
+router.use(authController.protect);
+
 router
   .route('/')
   .get(reviewController.getAllReviews)
