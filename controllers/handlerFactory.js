@@ -79,9 +79,10 @@ exports.getAll = (Model) =>
       .limitFields()
       .paginate();
 
-    const query = await features.query;
-
-    const docs = await query;
+    //.explain() help to check how many docs were scanned vs. how many docs were returned
+    //this helps us when we want too index certain fields and check effectiveness
+    // const docs = await features.query.explain();
+    const docs = await features.query;
 
     res.status(200).json({
       status: 'success',
