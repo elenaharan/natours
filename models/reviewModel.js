@@ -67,16 +67,39 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
     },
   ]);
 
-  await Tour.findByIdAndUpdate(tourId, {
-    ratingsQuantity: stats[0].nRating,
-    ratingsAverage: stats[0].avgRating,
-  });
+  if (stats.length > 0) {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: stats[0].nRating,
+      ratingsAverage: stats[0].avgRating,
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: 0,
+      ratingsAverage: 4.5,
+    });
+  }
 };
 
-reviewSchema.post('save', function() {
+reviewSchema.post('save', function () {
   //this keyword points to current review
+  //calling constructor method because review schema is not yet created
+  //and we cannot simply call Review.calcAverage
   this.constructor.calcAverageRatings(this.tour);
-})
+});
+
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  //this keyword points to current query, not current doc
+  //we need to execute query and that will give us access to the doc
+  //here the review will be the old one, prior to being update - b/c this is a "pre" middleware
+  //this.review -> we're attaching review property to the query, so that in the next middleware we can access tourId on that property
+  this.review = this.findOne();
+  // console.log(this.review);
+  next();
+});
+
+reviewSchema.post(/^findOneAnd/, async function () {
+  await this.review.constructor.calcAverageRatings(this.review.tour);
+});
 
 const Review = mongoose.model('Review', reviewSchema);
 
