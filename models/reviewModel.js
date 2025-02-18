@@ -94,11 +94,13 @@ reviewSchema.pre(/^findOneAnd/, async function (next) {
   //we need to execute query and that will give us access to the doc
   //here the review will be the old one, prior to being update - b/c this is a "pre" middleware
   //this.review -> we're attaching review property to the query, so that in the next middleware we can access tourId on that property
-  this.review = await this.findOne();
+  this.review = await this.model.findOne(this.getFilter());
   next();
 });
 
 reviewSchema.post(/^findOneAnd/, async function () {
+  if (!this.review) return;
+
   await this.review.constructor.calcAverageRatings(this.review.tour);
 });
 
