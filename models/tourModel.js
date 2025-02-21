@@ -183,17 +183,17 @@ tourSchema.pre(/^find/, function (next) {
 });
 
 //AGGREGATION MIDDLEWARE
-tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({
-    $match: {
-      secretTour: {
-        $ne: true,
-      },
-    },
-  });
-  console.log(this.pipeline());
-  next();
-});
+// tourSchema.pre('aggregate', function (next) {
+//   this.pipeline().unshift({
+//     $match: {
+//       secretTour: {
+//         $ne: true,
+//       },
+//     },
+//   });
+//   console.log(this.pipeline());
+//   next();
+// });
 
 //The first argument is the name of the collection
 //mongoose will convert it into lower case plural, i.e. "tours"
