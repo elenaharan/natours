@@ -157,6 +157,12 @@ exports.getDistances = catchAsync(async (req, res, next) => {
         distanceField: 'distance',
       },
     },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
+      },
+    },
   ]);
 
   res.status(200).json({
