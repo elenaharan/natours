@@ -15,6 +15,7 @@ const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 
 const app = express();
+app.set('view engine', 'pug');
 
 //1) GLOBAL MIDDLEWARES
 //SET SECURITY HTTP HEADERS
