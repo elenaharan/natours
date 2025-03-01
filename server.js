@@ -29,7 +29,7 @@ const server = app.listen(port, () => {
   console.log(`app running on port ${port}...`);
 });
 
-//uncught rejections are to do with async code like promises
+//uncaught rejections are to do with async code like promises
 process.on('unhandledRejection', (err) => {
   console.log('Unhandled rejection! Shutting down...');
   console.log(err.name, err.message);
