@@ -1,12 +1,22 @@
 /* eslint-disable */
+
 console.log('Hello from the client side.');
-const locations = JSON.parse(document.getElementById('map').dataset.locations);
-console.log(locations);
 
-mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+fetch('/api/mapbox-token')
+  .then((response) => response.json())
+  .then((data) => {
+    if (!data.accessToken) {
+      throw new Error('Mapbox token is missing!');
+    }
 
-const map = new mapboxgl.Map({
-  container: 'map', // container ID
-  center: [-74.5, 40], // starting position [lng, lat]
-  zoom: 9, // starting zoom
-});
+    mapboxgl.accessToken = data.accessToken;
+
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/elena-js/cm82v5dfp00y601qs9ryg48zf/draft',
+      center: [-73.946599, 40.637298],
+      zoom: 9,
+      interactive: false,
+    });
+  })
+  .catch((err) => console.error('Error loading Mapbox:', err));

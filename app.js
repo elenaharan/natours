@@ -86,6 +86,9 @@ app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.get('/api/mapbox-token', (req, res) => {
+  res.json({ accessToken: process.env.MAPBOX_ACCESS_TOKEN });
+});
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on the server!`, 404));
