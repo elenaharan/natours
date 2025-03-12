@@ -1,22 +1,70 @@
 /* eslint-disable */
 
 console.log('Hello from the client side.');
+const locations = JSON.parse(document.getElementById('map').dataset.locations);
+console.log(locations);
 
-fetch('/api/mapbox-token')
-  .then((response) => response.json())
-  .then((data) => {
+async function getMapboxToken() {
+  try {
+    const response = await fetch('/api/mapbox-token');
+    const data = await response.json();
+
     if (!data.accessToken) {
       throw new Error('Mapbox token is missing!');
     }
 
-    mapboxgl.accessToken = data.accessToken;
+    return data.accessToken;
+  } catch (error) {
+    console.error('Error loading Mapbox token:', error);
+    return null;
+  }
+}
 
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/elena-js/cm82v5dfp00y601qs9ryg48zf/draft',
-      center: [-73.946599, 40.637298],
-      zoom: 9,
-      interactive: false,
-    });
-  })
-  .catch((err) => console.error('Error loading Mapbox:', err));
+function initializeMap(accessToken) {
+  mapboxgl.accessToken = accessToken;
+
+  const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/elena-js/cm82v5dfp00y601qs9ryg48zf/draft',
+    // center: [-73.946599, 40.637298],
+    // zoom: 9,
+    // interactive: false,
+  });
+
+  const bounds = new mapboxgl.LngLatBounds();
+
+  locations.forEach((loc) => {
+    // Create marker
+    const el = document.createElement('div');
+    el.className = 'marker';
+
+    // Add the marker
+    new mapboxgl.Marker({
+      element: el,
+      anchor: 'bottom',
+    })
+      .setLngLat(loc.coordinates)
+      .addTo(map);
+
+    // Extend map bounds to include current locations
+    bounds.extend(loc.coordinates);
+  });
+
+  map.fitBounds(bounds, {
+    padding: {
+      top: 200,
+      bottom: 200,
+      left: 100,
+      right: 100,
+    },
+  });
+}
+
+async function init() {
+  const accessToken = await getMapboxToken();
+  if (accessToken) {
+    initializeMap(accessToken);
+  }
+}
+
+init();
