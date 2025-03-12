@@ -26,6 +26,7 @@ function initializeMap(accessToken) {
   const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/elena-js/cm82v5dfp00y601qs9ryg48zf/draft',
+    scrollZoom: false,
     // center: [-73.946599, 40.637298],
     // zoom: 9,
     // interactive: false,
@@ -46,6 +47,14 @@ function initializeMap(accessToken) {
       .setLngLat(loc.coordinates)
       .addTo(map);
 
+    // Add popup
+    new mapboxgl.Popup({
+      offset: 30,
+    })
+      .setLngLat(loc.coordinates)
+      .setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`)
+      .addTo(map);
+
     // Extend map bounds to include current locations
     bounds.extend(loc.coordinates);
   });
@@ -53,7 +62,7 @@ function initializeMap(accessToken) {
   map.fitBounds(bounds, {
     padding: {
       top: 200,
-      bottom: 200,
+      bottom: 150,
       left: 100,
       right: 100,
     },
