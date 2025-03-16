@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const cors = require('cors');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
@@ -20,13 +21,35 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 //1) GLOBAL MIDDLEWARES
-//serving static files
+
+// Enable CORS (Should be before Helmet)
+app.use(
+  cors({
+    origin: 'http://localhost:8000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  })
+);
+
+//Set security HTTP headers (CSP is now part of Helmet)
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+        connectSrc: ["'self'", "http://127.0.0.1:8000"],
+      },
+    },
+  })
+);
+
+//Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-//SET SECURITY HTTP HEADERS
-app.use(helmet());
-
 //use .use() method to add a function to the project's middleware stack
+// Dev logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
