@@ -7,6 +7,7 @@ const cors = require('cors');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -39,7 +40,7 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "https://cdnjs.cloudflare.com"],
-        connectSrc: ["'self'", "http://127.0.0.1:8000"],
+        connectSrc: ["'self'", "http://localhost:8000"],
       },
     },
   })
@@ -75,6 +76,9 @@ app.use(
   }),
 );
 
+// Use Cookie parser to parse data form the cookie
+app.use(cookieParser());
+
 //DATA SANITIZATION against NoSQL query injection
 app.use(mongoSanitize());
 
@@ -100,7 +104,7 @@ app.use(
 //Test middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-
+  console.log(req.cookies)
   next();
 });
 
