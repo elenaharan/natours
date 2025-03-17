@@ -108,17 +108,42 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.restrictTo =
-  (...roles) =>
-  (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return next(
-        new AppError('You do not have permission to perform this action', 403),
-      );
+// Only for rendered pages, check if token exists on the cookie
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  if (req.cookies.jwt) {
+    //verify the token
+    const decoded = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRET);
+
+    // Check if user still exists
+    const currentUser = await User.findById(decoded.id);
+
+    if (!currentUser) return next();
+
+    // Check if user changed password after the JWT was issued
+    if (currentUser.changedPasswordAfter(decoded.iat)) {
+      return next();
     }
 
+    // There is a logged in user
+    // Pass in the user into the template
+    res.locals.user = currentUser;
     next();
-  };
+  }
+
+  next();
+});
+
+exports.restrictTo =
+  (...roles) =>
+    (req, res, next) => {
+      if (!roles.includes(req.user.role)) {
+        return next(
+          new AppError('You do not have permission to perform this action', 403),
+        );
+      }
+
+      next();
+    };
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   //1) Get user based on posted email
