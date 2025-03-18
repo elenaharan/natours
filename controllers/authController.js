@@ -117,7 +117,9 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
     // Check if user still exists
     const currentUser = await User.findById(decoded.id);
 
-    if (!currentUser) return next();
+    if (!currentUser) {
+      return next();
+    }
 
     // Check if user changed password after the JWT was issued
     if (currentUser.changedPasswordAfter(decoded.iat)) {
@@ -127,10 +129,9 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
     // There is a logged in user
     // Pass in the user into the template
     res.locals.user = currentUser;
-    next();
+    return next();
   }
-
-  next();
+  next()
 });
 
 exports.restrictTo =
