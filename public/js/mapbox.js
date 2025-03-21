@@ -1,26 +1,5 @@
-/* eslint-disable */
-
-const locations = JSON.parse(document.getElementById('map').dataset.locations);
-console.log(locations);
-
-async function getMapboxToken() {
-  try {
-    const response = await fetch('/api/mapbox-token');
-    const data = await response.json();
-
-    if (!data.accessToken) {
-      throw new Error('Mapbox token is missing!');
-    }
-
-    return data.accessToken;
-  } catch (error) {
-    console.error('Error loading Mapbox token:', error);
-    return null;
-  }
-}
-
-function initializeMap(accessToken) {
-  mapboxgl.accessToken = accessToken;
+export const displayMap = (locations) => {
+  mapboxgl.accessToken = 'pk.eyJ1IjoiZWxlbmEtanMiLCJhIjoiY204MnVid2V0MWplYzJrczVmN2EwN3hvZSJ9.JeJFEUY_8j4xqlU7z-Wnyw'
 
   const map = new mapboxgl.Map({
     container: 'map',
@@ -67,12 +46,3 @@ function initializeMap(accessToken) {
     },
   });
 }
-
-async function init() {
-  const accessToken = await getMapboxToken();
-  if (accessToken) {
-    initializeMap(accessToken);
-  }
-}
-
-init();
