@@ -70,11 +70,10 @@ app.use('/api', limiter);
 //declare: app.use(express.json()); at the top
 //BODY PARSER, reading data from body into req.body
 //limit body of the req to 10kb
-app.use(
-  express.json({
-    limit: '10kb',
-  }),
-);
+app.use(express.json({ limit: '10kb' }));
+//we're using this middleware because the method in which the form send the data to the server is url encoded,
+//we need to parse the data coming in within the req
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Use Cookie parser to parse data form the cookie
 app.use(cookieParser());
