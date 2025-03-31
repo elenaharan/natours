@@ -1,8 +1,22 @@
 // const fs = require('fs');
+const multer = require('multer');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/img/users');
+  },
+  filename: (req, file, cb) => {
+    const extension = file.mimetype.split('/')[1];
+    cb(null, `user-${req.user.id}-${Date.now()}.${extension}`);
+  },
+});
+
+const upload = multer({ dest: 'public/img/users' });
+exports.uploadUserPhoto = upload.single('photo');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -27,7 +41,7 @@ exports.getMe = (req, res, next) => {
 exports.getAllUsers = factory.getAll(User);
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  //create an error if the user POSTs the password
+  //create an error if the user is trying to update password
   if (req.body.password || req.body.passwordConfirm)
     next(
       new AppError(
@@ -36,15 +50,12 @@ exports.updateMe = catchAsync(async (req, res, next) => {
       ),
     );
 
-  //update user doc: we can use findByIdAndUpdate because we are not dealing with updating sensitive data like password
-  //new:true => returns the new updated object instead of the old one
-  //runValidators: true => check if supplied fields are correct
-  //we will need to filter the body so that it only contains certain fields that are allowed to be updated
-  //for ex, if body.role = 'admin', this should not be allowed
-
   //filter out fields that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email');
 
+  //update user doc: we can use findByIdAndUpdate because we are not dealing with updating sensitive data like password
+  //new:true => returns the new updated object instead of the old one
+  //runValidators: true => check if supplied fields are correct
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
