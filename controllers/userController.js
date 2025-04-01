@@ -23,7 +23,7 @@ const multerFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({ dest: 'public/img/users' });
+const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 exports.uploadUserPhoto = upload.single('photo');
 
 const filterObj = (obj, ...allowedFields) => {
