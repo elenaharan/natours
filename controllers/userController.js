@@ -60,6 +60,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 
   //filter out fields that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email');
+  if (req.file) filteredBody.photo = req.file.filename;
 
   //update user doc: we can use findByIdAndUpdate because we are not dealing with updating sensitive data like password
   //new:true => returns the new updated object instead of the old one
