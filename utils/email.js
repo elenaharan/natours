@@ -34,9 +34,10 @@ module.exports = class Email {
 
     // 2) define email options
     const mailOptions = {
-      from: 'Elena Haran <hello@elena.io>',
-      to: options.email,
-      subject: options.subject,
+      from: this.from,
+      to: this.to,
+      subject,
+      html,
       text: options.message,
       //html: we can specify the HTML property or leave it as text
     };
