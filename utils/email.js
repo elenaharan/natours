@@ -1,5 +1,14 @@
 const nodemailer = require('nodemailer');
 
+module.exports = class Email {
+  constructor(user, url) {
+    this.to = user.email;
+    this.firstName = user.name.split(' ')[0];
+    this.url = url;
+    this.from = 'Elena Haran <hello@elena.io>';
+  }
+};
+
 const sendEmail = async (options) => {
   //1) create a transporter - this is what will actually send the email
   const transporter = nodemailer.createTransport({
