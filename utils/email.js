@@ -26,7 +26,7 @@ module.exports = class Email {
     });
   }
 
-  send(template, subject) {
+  async send(template, subject) {
     // 1) render html based on a pug template
     const html = pug.renderFile(
       `${__dirname}/../../views/emails/${template}.pug`,
@@ -47,15 +47,10 @@ module.exports = class Email {
     };
 
     //3) create a transport & send email
-    this.newTransport();
+    await this.newTransport().sendMail(mailOptions);
   }
 
-  sendWelcome() {
-    this.send('welcome', 'Welcome to the Natours Family!');
+  async sendWelcome() {
+    await this.send('welcome', 'Welcome to the Natours Family!');
   }
-};
-
-const sendEmail = async (options) => {
-  //send email
-  await transporter.sendMail(mailOptions);
 };
