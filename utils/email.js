@@ -30,6 +30,11 @@ module.exports = class Email {
     // 1) render html based on a pug template
     const html = pug.renderFile(
       `${__dirname}/../../views/emails/${template}.pug`,
+      {
+        firstName: this.firstName,
+        url: this.url,
+        subject,
+      },
     );
 
     // 2) define email options
