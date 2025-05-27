@@ -10,7 +10,7 @@ module.exports = class Email {
     this.from = `Elena Haran <${process.env.EMAIL_FROM}>`;
   }
 
-  createTransport() {
+  newTransport() {
     if (process.env.NODE_ENV === 'production') {
       // Sendgrid
       return 1;
@@ -47,6 +47,7 @@ module.exports = class Email {
     };
 
     //3) create a transport & send email
+    this.newTransport();
   }
 
   sendWelcome() {
