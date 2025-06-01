@@ -15,6 +15,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
@@ -29,8 +30,8 @@ app.use(
     origin: 'http://localhost:8000',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true
-  })
+    credentials: true,
+  }),
 );
 
 //Set security HTTP headers (CSP is now part of Helmet)
@@ -39,11 +40,11 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "https://cdnjs.cloudflare.com"],
-        connectSrc: ["'self'", "http://127.0.0.1:8000", "ws://localhost:*"],
+        scriptSrc: ["'self'", 'https://cdnjs.cloudflare.com'],
+        connectSrc: ["'self'", 'http://127.0.0.1:8000', 'ws://localhost:*'],
       },
     },
-  })
+  }),
 );
 
 //Serving static files
@@ -111,6 +112,7 @@ app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
 app.get('/api/mapbox-token', (req, res) => {
   res.json({ accessToken: process.env.MAPBOX_ACCESS_TOKEN });
 });
