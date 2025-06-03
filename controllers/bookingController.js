@@ -1,10 +1,10 @@
-// const Tour = require('../models/tourModel');
-// const AppError = require('../utils/appError');
-// const catchAsync = require('../utils/catchAsync');
-// const factory = require('./handlerFactory');
+const Tour = require('../models/tourModel');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
+const factory = require('./handlerFactory');
 
-exports.getCheckoutSession = (req, res, next) => {
-  // 1) Get the currently booked tour by id from the DB
+exports.getCheckoutSession = catchAsync(async (req, res, next) => {
+  const tour = await Tour.findById(req.params.tourId);
   // 2) Create the checkout session
   // 3) Send the checkout session to the FE in the response
-};
+});
